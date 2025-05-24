@@ -606,6 +606,7 @@
             <div class="delivery-options">
                 <label><input type="radio" name="deliveryType" value="pickup" checked> استلام من المطعم</label>
                 <label><input type="radio" name="deliveryType" value="delivery"> توصيل للمنزل</label>
+                <label><input type="radio" name="deliveryType" value="dine_in"> محلي </label> <!-- تمت الإضافة هنا -->
             </div>
             <textarea id="general-order-notes" placeholder="ملاحظات إضافية على الطلب"></textarea>
 
@@ -664,7 +665,7 @@
     <!-- ===== End Footer Section ===== -->
 
     <script>
-        const deliveryFee = 10;
+        const deliveryFee = 5;
         const CART_STORAGE_KEY = 'restaurantAppCart_vFinalCompleteWithFooterFixed';
         const VAT_RATE = 0.15;
         const COMPACT_VIEW_STORAGE_KEY = 'restaurantApp_compactView'; // لتخزين تفضيل العرض
@@ -882,7 +883,7 @@
         "name": "بروستد حار",
         "category": "بروستد",
         "description": "1700 سعرة حرارية",
-        "basePrice": 19,
+        "basePrice": 17,
         "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDD3KKDJmQNkXUHbZaX8SSxqmEuF4gMK2TukAWJfb6Zm3nWyodswMWUULQ4nm7G02-CmqZkRhMIYue7sdTfO0chfQLfgl4tmNZ9Vv15ZPJdW5lRpqQ3kck1sdkWRj4QGozmoyLycAOweOB3ZR2WV97ZU2YrZ8T9DnCPlFo4lBxaJOdkBP9t6Wdms8GpL-f/s1280/WhatsApp%20Image%202025-05-23%20at%207.00.16%20PM.jpeg",
         "customizations": []
     },
@@ -1021,6 +1022,15 @@
         "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbeCmcLiqhCXRVA1AdkGsgJzuVgKPADgTWYbvceYTHiIhc0oWYA02BlZRuE2iVeIDzs5JdWi1dCbTy6P8IvJpdCsJaf_Iw8ThY7fzXCAYJaG5ZSFQwPpHNmGgRXNTGl2HELgN4sXBbBGkQon7VfvZvXfI0wQQYjMrNBtvyz4aTKZ4kNN3FnVD3qEnNV2BQ/s1690/bf88d184-d280-4ea7-9331-9e3669ef0337.jfif",
         "customizations": []
     },
+	{
+        "id": "ED38O7",
+        "name": "ببسي دايت",
+        "category": "مشروبات",
+        "description": "172 سعرة حرارية",
+        "basePrice": 3,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjalPh-LzmrwldkyJ9sPDu32BJ0NRJcE61dUHmmtBioYXRwcsy0z7_B0VPvzRbxy-90IcgbOKdc0rS0koiIk2N-UkWonGXrsZwiJX4X47Kffz8RNzMVl_QYFAX2OmJVm8mKQ1q9QlHGxxNIdg8wjQCVEOCVn3OmXR6tL80Gn__3AyHeRLWasVwE9gZHREie/s1200/c2bae86f-933a-4e49-a076-35fb9bc09142.jpeg",
+        "customizations": []
+    },
     {
         "id": "PUSYR5",
         "name": "ماء",
@@ -1070,7 +1080,7 @@
 
 
         let cart = [];
-        let currentDeliveryType = 'pickup';
+        let currentDeliveryType = 'pickup'; // Default to pickup as it's checked
         let currentProductIdInModal = null;
         let currentProductInModalObject = null;
         let notificationTimeout;
@@ -1425,8 +1435,9 @@
                 currentDeliveryFee = deliveryFee;
                 deliveryFeeLineElement.style.display = 'flex';
                 deliveryFeeAmountElement.textContent = deliveryFee.toFixed(2);
-            } else {
+            } else { // For 'pickup' and 'dine_in'
                 deliveryFeeLineElement.style.display = 'none';
+                deliveryFeeAmountElement.textContent = '0';
             }
             const grandTotal = subtotal + currentDeliveryFee;
             cartGrandTotalAmountElement.textContent = grandTotal.toFixed(2);
@@ -1499,9 +1510,12 @@
                 message += `نوع الطلب: توصيل للمنزل\n`;
                 message += `رسوم التوصيل: ${deliveryFee.toFixed(2)} ريال\n`;
                 finalTotalForMessage += deliveryFee;
-            } else {
+            } else if (currentDeliveryType === 'pickup') {
                 message += `نوع الطلب: استلام من المطعم\n`;
+            } else if (currentDeliveryType === 'dine_in') {
+                message += `نوع الطلب: طلب محلي (تناول في المطعم)\n`;
             }
+            
             const generalNotes = generalOrderNotesTextarea.value.trim();
             if (generalNotes) {
                 message += `\nملاحظات عامة:\n${generalNotes}\n`;
